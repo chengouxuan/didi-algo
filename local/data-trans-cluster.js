@@ -1,17 +1,10 @@
 var fs = require('fs');
-var csvWriter = require('csv-write-stream');
-var async = require('async');
 var AV = require('./lean.js');
 var _ = require('underscore');
 var Cluster = require('./av-class/cluster');
 
-var filePath = 'data-transformed/main.csv';
-
 var main = function () {
   
-  var writer = csvWriter({ headers: ['time', 'area', 'gap', 'total', 'gapPercent']});
-  writer.pipe(fs.createWriteStream(filePath));
-
   parseClusterMap(function (e, obj) {
     if (e) {
       throw e;
