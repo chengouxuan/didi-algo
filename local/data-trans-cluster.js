@@ -7,11 +7,7 @@ var Cluster = require('./av-class/cluster');
 
 var filePath = 'data-transformed/main.csv';
 
-var main = function (force) {
-  if (fs.existsSync(filePath) && !force) {
-    console.log(filePath + ' exists, using old file');
-    return;
-  }
+var main = function () {
   
   var writer = csvWriter({ headers: ['time', 'area', 'gap', 'total', 'gapPercent']});
   writer.pipe(fs.createWriteStream(filePath));
@@ -48,4 +44,4 @@ var parseClusterMap = function (callback) {
   });
 };
 
-main(true);
+main();
