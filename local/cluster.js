@@ -21,14 +21,15 @@ var parseClusterMap = function (callback) {
 
 
 module.exports = {
-  each: function (iteratee) {
+  each: function (iteratee, callback) {
     parseClusterMap(function (e, obj) {
       _.each(_.allKeys(obj), function (key) {
         iteratee({
           ddHash: key,
           ddId: eval(obj[key])
         });
-      })
+      });
+      callback ? callback(e) : 0;
     });
   }
 }
