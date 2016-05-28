@@ -3,6 +3,9 @@ var _ = require('underscore');
 
 var parsePoi = function (iteratee) {
   fs.readFile('./data/training_data/poi_data/poi_data', 'utf-8', function (e, str) {
+    if (e) {
+      throw e;
+    }
     var lines = str.split('\n');
     _.each(lines, function (line) {
       if (!line) {

@@ -5,6 +5,9 @@ var _ = require('underscore');
 var parseClusterMap = function (callback) {
   var obj = {};
   fs.readFile('./data/training_data/cluster_map/cluster_map', 'utf-8', function (e, str) {
+    if (e) {
+      throw e;
+    }
     var lines = str.split('\n');
     _.each(lines, function (line) {
       var values = line.split('\t');
