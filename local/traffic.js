@@ -24,7 +24,7 @@ var parseTraffic = function (path, iteratee, callback) {
   });
 };
 
-var parseTraffic_all = function (iteratee) {
+var parseTraffic_all = function (iteratee, callback) {
   var dir = './data/training_data/traffic_data/';
   fs.readdir(dir, function (e, filenames) {
     if (e) {
@@ -36,11 +36,7 @@ var parseTraffic_all = function (iteratee) {
     var tasks = _.map(filenames, function (filename) {
       return parseTraffic.bind(null, dir + filename, iteratee);
     });
-    async.series(tasks, function (e, res) {
-      if (e) {
-        throw e;
-      }
-    });
+    async.series(tasks, callback);
   })
 }
 

@@ -1,7 +1,7 @@
 var fs = require('fs');
 var _ = require('underscore');
 
-var parsePoi = function (iteratee) {
+var parsePoi = function (iteratee, callback) {
   fs.readFile('./data/training_data/poi_data/poi_data', 'utf-8', function (e, str) {
     if (e) {
       throw e;
@@ -23,6 +23,7 @@ var parsePoi = function (iteratee) {
         });
       });
     });
+    callback ? callback() : 0;
   });
 };
 
