@@ -1,22 +1,22 @@
 var fs = require('fs');
 var _ = require('underscore');
 
+var gObj;
 
 var parseClusterMap = function (callback) {
+  if (gObj) {
+    return callback(null, gObj);
+  }
   var obj = {};
-  fs.readFile('./data/training_data/cluster_map/cluster_map', 'utf-8', function (e, str) {
-    if (e) {
-      throw e;
+  var str = fs.readFileSync('./data/training_data/cluster_map/cluster_map', 'utf-8');
+  var lines = str.split('\n');
+  _.each(lines, function (line) {
+    var values = line.split('\t');
+    if (values.length >= 2) {
+      obj[values[0]] = values[1];
     }
-    var lines = str.split('\n');
-    _.each(lines, function (line) {
-      var values = line.split('\t');
-      if (values.length >= 2) {
-        obj[values[0]] = values[1];
-      }
-    });
-    callback(null, obj);
   });
+  callback(null, gObj = obj);
 };
 
 

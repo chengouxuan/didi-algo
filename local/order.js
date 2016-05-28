@@ -2,7 +2,8 @@ var fs = require('fs');
 var _ = require('underscore');
 var async = require('async');
 
-var parseOrder = function (path, iteratee, callback) {
+var parseOrder = function (params, iteratee, callback) {
+  var path = params.path;
   fs.readFile(path, 'utf-8', function (e, str) {
     if (e) {
       throw e;
@@ -14,11 +15,11 @@ var parseOrder = function (path, iteratee, callback) {
           ddId_order: v[0],
           ddId_driver: v[1],
           ddId_passenger: v[2],
-          ddId_clusterStart: v[3],
-          ddId_clusterDest: v[4],
+          ddId_start: v[3],
+          ddId_dest: v[4],
           price: eval(v[5]),
           date: new Date(v[6])
-        });
+        }, params.filename, params.total, params.curr);
       }
     });
     callback();
@@ -34,8 +35,13 @@ var parseOrder_all = function (iteratee, callback) {
     filenames = _.filter(filenames, function(filename) {
       return filename.indexOf('order_data_') === 0;
     });
-    var tasks = _.map(filenames, function (filename) {
-      return parseOrder.bind(null, dir + filename, iteratee);
+    var tasks = _.map(filenames, function (filename, ind) {
+      return parseOrder.bind(null, {
+        path: dir + filename,
+        filename: filename,
+        total: filenames.length,
+        curr: ind
+      }, iteratee);
     });
     async.series(tasks, callback);
   })
