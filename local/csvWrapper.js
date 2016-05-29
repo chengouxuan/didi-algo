@@ -4,9 +4,18 @@ var csvWriter = require('csv-write-stream');
 var csv = require('csv');
 var config = require('./config.json');
 
+var getAllKeys = function (data) {
+  var keys = [];
+  _.each(data, function (d) {
+    keys = keys.concat(_.allKeys(d));
+    keys = _.uniq(keys);
+  });
+  return keys;
+};
+
 var createCsv = function (data, filename, primKey, primKey2) {
   console.log('create csv', filename);
-  var keys = _.allKeys(data[0]);
+  var keys = getAllKeys(data);
   if (primKey) {
     var ind = 0;
     var swapInd = -1;

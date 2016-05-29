@@ -10,6 +10,10 @@ var dateInPath = function (filename) {
   return new Date(sp[0]);
 };
 
+var dateString = function (date) {
+  return dateFormat(date, "yyyy-mm-dd");
+}
+
 var path = config.goodData + 'timed_weather/';
 
 var main = function () {
@@ -27,7 +31,7 @@ var main = function () {
         });
         csvWrapper.create(
           average,
-          'timed_weather_avg_' + dateFormat(dateInPath(filename), "yyyy-mm-dd"),
+          'timed_weather_avg_' + dateString(dateInPath(filename)),
           'time'
         );
       });
