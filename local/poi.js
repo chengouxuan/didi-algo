@@ -1,8 +1,9 @@
 var fs = require('fs');
 var _ = require('underscore');
+var config = require('./config.json');
 
 var parsePoi = function (iteratee, callback) {
-  fs.readFile('./data/training_data/poi_data/poi_data', 'utf-8', function (e, str) {
+  fs.readFile(config.paths.poi, 'utf-8', function (e, str) {
     if (e) {
       throw e;
     }
