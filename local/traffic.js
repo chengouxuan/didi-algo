@@ -20,7 +20,7 @@ var parseTraffic = function (path, iteratee, callback) {
         });
       }
     });
-    callback();
+    callback ? callback() : 0;
   });
 };
 
@@ -41,5 +41,6 @@ var parseTraffic_all = function (iteratee, callback) {
 }
 
 module.exports = {
-  each: parseTraffic_all
+  each: parseTraffic_all,
+  parse: parseTraffic
 };

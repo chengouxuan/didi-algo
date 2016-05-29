@@ -3,7 +3,7 @@ var _ = require('underscore');
 var async = require('async');
 
 var parseOrder = function (params, iteratee, callback) {
-  var path = params.path;
+  var path = (typeof params === 'string') ? params : params.path;
   fs.readFile(path, 'utf-8', function (e, str) {
     if (e) {
       throw e;
@@ -48,5 +48,6 @@ var parseOrder_all = function (iteratee, callback) {
 }
 
 module.exports = {
-  each: parseOrder_all
+  each: parseOrder_all,
+  parse: parseOrder
 };

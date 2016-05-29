@@ -18,7 +18,7 @@ var parseWeather = function (path, iteratee, callback) {
         });
       }
     });
-    callback(null, new Date());
+    callback ? callback(null, new Date()) : 0;
   });
 };
 
@@ -39,5 +39,6 @@ var parseWeather_all = function (iteratee, callback) {
 }
 
 module.exports = {
-  each: parseWeather_all
+  each: parseWeather_all,
+  parse: parseWeather
 };
