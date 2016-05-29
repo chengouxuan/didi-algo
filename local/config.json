@@ -1,5 +1,6 @@
 {
   "tempDir": "./data-transformed/",
+  "goodData": "./good-data/",
   "paths": {
     "order": [
         "./data/training_data/order_data/order_data_2016-01-01",

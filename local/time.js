@@ -1,10 +1,9 @@
 
 var getIndex = function (date) {
   var d = new Date(date);
-  d.setMinutes(0);
-  d.setHours(0);
+  d.setHours(0, 0, 0, 0);
   var mod = 10 * 60 * 1000;
-  var time = date.getTime();
+  var time = date.getTime() - d.getTime();
   return (time - time % mod) / mod;
 };
 
