@@ -1,6 +1,7 @@
 var fs = require('fs');
 var _ = require('underscore');
 var async = require('async');
+var config = require('./config.json');
 
 var parseOrder = function (params, iteratee, callback) {
   var path = (typeof params === 'string') ? params : params.path;
@@ -27,24 +28,15 @@ var parseOrder = function (params, iteratee, callback) {
 };
 
 var parseOrder_all = function (iteratee, callback) {
-  var dir = './data/training_data/order_data/';
-  fs.readdir(dir, function (e, filenames) {
-    if (e) {
-      throw e;
-    }
-    filenames = _.filter(filenames, function(filename) {
-      return filename.indexOf('order_data_') === 0;
-    });
-    var tasks = _.map(filenames, function (filename, ind) {
-      return parseOrder.bind(null, {
-        path: dir + filename,
-        filename: filename,
-        total: filenames.length,
-        curr: ind
-      }, iteratee);
-    });
-    async.series(tasks, callback);
-  })
+  var tasks = _.map(config.paths.order, function (path, ind) {
+    return parseOrder.bind(null, {
+      path: path,
+      filename: _.last(path.split('/')),
+      total: config.paths.order.length,
+      curr: ind
+    }, iteratee);
+  });
+  async.series(tasks, callback);
 }
 
 module.exports = {

@@ -1,7 +1,7 @@
 var fs = require('fs');
 var _ = require('underscore');
 var order = require('./order.js');
-var timeSlot = require('./timeSlot.js').all;
+var time = require('./time.js');
 var cluster = require('./cluster.js');
 var ProgressBar = require('progress');
 var csvWriter = require('csv-write-stream');
@@ -37,11 +37,10 @@ var findAndUpdate = function (data, ord) {
 
 var createDataSlots = function (date) {
   var data = [];
+  var b = new Date(date.setHours(0, 0, 0, 0));
+  var e = new Date(date.setHours(24, 0, 0, 0));
+  var timeSlot = time.gen(b, e);
   _.each(timeSlot, function (slot) {
-    if (slot.begin.getDate() !== date.getDate() ||
-        slot.begin.getFullYear() !== date.getFullYear()) {
-      return;
-    }
     var d;
     data.push(d = {
       date: slot,
@@ -66,7 +65,6 @@ var createDataSlots = function (date) {
 };
 
 var createCsv = function (params) {
-  console.log('create csv', params.filename);
   var path = 'data-transformed/' + params.filename + '.csv';
   var writer = csvWriter({ headers: ['time', 'begin', 'end', 'area', 'total', 'gap', 'gapRate', 'total_dest']});
   writer.pipe(fs.createWriteStream(path));
@@ -88,8 +86,12 @@ var createCsv = function (params) {
 };
 
 var dateOfFilename = function (filename) {
-  var sp = filename ? filename.split('order_data_') : [];
-  var date = sp ? new Date(sp[sp.length - 1]) : 0;
+  var sp = filename ? filename.split('_') : [];
+  var date;
+  while (sp && (!date || !date.getTime())) {
+    date = new Date(sp[sp.length - 1]);
+    sp = sp.slice(0, sp.length - 1);
+  }
   return date;
 };
 
