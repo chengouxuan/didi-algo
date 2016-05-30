@@ -12,6 +12,7 @@
   ],
   "license": "MIT",
   "dependencies": {
+  	"brain": "^0.7.0",
     "async": "^2.0.0-rc.5",
     "csv-write-stream": "^2.0.0",
     "leanengine": "^0.4.0",
