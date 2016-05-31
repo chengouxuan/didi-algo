@@ -3,6 +3,7 @@ var csvWrapper = require('./csvWrapper.js');
 var config = require('./config.json');
 var ut = require('./util.js');
 var fs = require('fs');
+var util = require('util');
 
 var path = config.goodData + 'combined/';
 
@@ -15,7 +16,7 @@ var main = function () {
       csvWrapper.parse(path + filename, function (e, data) {
         var td = makeTrainingData(data);
         var date = ut.dateInPath(filename);
-        csvWrapper.create(td, 'trainintData_' + ut.dateString(date), 'out', 'in_time');
+        csvWrapper.create(td, 'training_data_' + ut.dateString(date));
       });
     });
   });
@@ -30,58 +31,76 @@ var makeTrainingData = function (data) {
     return eval(d.area);
   });
   var td = [];
-  _.each(data, function (output, ind) {
+  _.each(data.slice(0, 144), function (oneArea, ind) {
+    var outputs = [];
+    for (var i = ind; i < data.length; i += 144) {
+      outputs.push(data[i]);
+    }
+    if (outputs.length !== 66) {
+      throw new Error('bad data, outputs length must == 66');
+    }
     var i = ind;
     var ok = true;
     var inputs = [];
     while (ind >= 3 && --i >= ind - 3) {
-      var input = data[i];
-      if (!(eval(input.time) < eval(output.time) && input.area === output.area)) {
-        ok = false;
-        break;
+      var j = 0;
+      var timeDiff = ind - i;
+      while (j + i < data.length) {
+        var input = data[i + j];
+        if (!(eval(input.time) + timeDiff === eval(outputs[0].time) && input.area === outputs[j / 144].area)) {
+          // console.log(timeDiff);
+          // console.log(input);
+          // console.log(outputs[j / 144]);
+          ok = false;
+          break;
+        }
+        inputs.push(input);
+        j += 144;
       }
-      inputs.push(input);
     }
-    if (ok && inputs.length === 3) {
+    if (ok && inputs.length === 3 * 66) {
       td.push({
         input: inputs,
-        output: output
+        output: outputs
       });
       // console.log(td);
     } else {
-      // console.log(ok);
+      // console.log(ok, inputs);
     }
   });
+        // console.log(util.inspect(td, { depth: 5 }));
   td = flattenTrainingData(td);
-  td = filterInvalidData(td);
+  // td = filterInvalidData(td);
   return td;
 };
 
-var flattenTrainingData = function (trainintData) {
+var flattenTrainingData = function (trainingData) {
   var ret = [];
-  _.each(trainintData, function (td) {
+  _.each(trainingData, function (td) {
     var obj = {};
-    _.each(td.input, function (inp, inputInd) {
-      _.each(_.allKeys(_.omit(inp, ['gapRate', 'timeSpan', 'time', 'poiCount'])), function (key) {
-        obj['in_' + key + '_' + inputInd] = inp[key];
+    _.each(td.output, function (o) {
+      _.each(o, function (oo) {
+        obj['out_a' + o.area] = o.gap;
       });
-      obj.out = td.output.gap;
-      obj.in_time = td.output.time;
-      obj.in_poiCount = td.output.poiCount;
+    });
+    _.each(td.input, function (inp, inputInd) {
+      _.each(_.allKeys(_.omit(inp, ['gapRate', 'timeSpan', 'area'])), function (key) {
+        obj['in_' + key + '_t' + inputInd + '_a' + inp.area] = inp[key];
+      });
     });
     ret.push(obj);
   });
   return ret;
 };
 
-var filterInvalidData = function (trainintData) {
-  // return trainintData;
+var filterInvalidData = function (trainingData) {
+  // return trainingData;
   var keys = [];
-  _.each(trainintData, function (td) {
+  _.each(trainingData, function (td) {
     keys = keys.concat(_.allKeys(td));
     keys = _.uniq(keys);
   });
-  trainintData = _.filter(trainintData, function (td) {
+  trainingData = _.filter(trainingData, function (td) {
     var valid = true;
     _.each(keys, function (k) {
       var v = td[k];
@@ -89,7 +108,7 @@ var filterInvalidData = function (trainintData) {
     });
     return valid;
   });
-  return trainintData;
+  return trainingData;
 };
 
 
