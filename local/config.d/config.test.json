@@ -1,6 +1,7 @@
 {
   "tempDir": "./data-transformed/",
   "goodData": "./good-data-test/",
+  "testReadme": "./data/test_set_1/read_me_1.txt",
   "paths": {
     "order": [
         "./data/test_set_1/order_data/order_data_2016-01-22_test",

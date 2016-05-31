@@ -5,17 +5,21 @@ var brain = require('brain');
 var fs = require('fs');
 var async = require('async');
 
+if (!config.test) {
+  throw new Error('please use test-config file');
+}
+
 var main = function () {
-  var path = config.goodData + 'training_naive_way/';
-  var testPath = config.goodData + 'test/';
+  var path = config.goodData + 'training_naive_way/training_set/';
+  var testPath = config.goodData + 'training_naive_way/test/';
   var net = new brain.NeuralNetwork();
-  fs.resddir(path, function (e, filenames) {
+  fs.readdir(path, function (e, filenames) {
     if (e) {
       throw e;
     }
     var tasks = [];
     _.each(filenames, function (filename) {
-      tasks.push(trainFunction(brain, path + filename));
+      tasks.push(trainFunction(net, path + filename));
     });
     async.parallel(tasks, function (e) {
       if (e) {
@@ -27,7 +31,7 @@ var main = function () {
         }
         var tasks = [];
         _.each(filenames, function (filename) {
-          tasks.push(runFunction(brain, testPath + filename));
+          tasks.push(runFunction(net, testPath + filename));
         });
         async.parallel(tasks, function (e, outputs) {
           if (e) {
@@ -46,7 +50,7 @@ var createCsv = function (outputs) {
   });
 };
 
-var runFunction = function (brain, path) {
+var runFunction = function (net, path) {
   return function (callback) {
     csvWrapper.parse(path, function (e, testData) {
       if (e) {
@@ -64,21 +68,21 @@ var runFunction = function (brain, path) {
   };
 };
 
-var trainFunction = function (brain, path) {
+var trainFunction = function (net, path) {
   return function (callback) {
     csvWrapper.parse(path, function (e, data) {
       if (e) {
         throw e;
       }
       _.each(data, function (d) {
-        var notInKeys = _.filter(_.allKeys(td), function (k) {
+        var notInKeys = _.filter(_.allKeys(d), function (k) {
           return _.indexOf(k, 'in_') !== 0;
         });
-        var notOutKeys = _.filter(_.allKeys(td), function (k) {
+        var notOutKeys = _.filter(_.allKeys(d), function (k) {
           return _.indexOf(k, 'out_') !== 0;
         });
         net.train({
-          input: _.omit(d, noInKeys),
+          input: _.omit(d, notInKeys),
           output: _.omit(d, notOutKeys)
         });
       });

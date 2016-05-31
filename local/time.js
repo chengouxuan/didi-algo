@@ -1,3 +1,5 @@
+var _ = require('underscore');
+
 
 var getIndex = function (date) {
   var d = new Date(date);
@@ -23,6 +25,19 @@ var generate = function (begin, end) {
   }
   return ret;
 };
+
+var parseTimeTag = function (timeTag) {
+  var sp = timeTag.split('-');
+  var date = new Date(sp.slice(0, 3).join('-'));
+  var index = eval(_.last(sp)) - 1;
+  date.setHours(0, 0, 0, 0);
+  date.setTime(date.getTime() + (index + 0.5) * 10 * 60 * 1000);
+  return {
+    date: date,
+    time: index + 1,
+    index: index
+  };
+}
 
 var exp = module.exports = {
   gen: generate,
