@@ -7,13 +7,9 @@ var csvWrapper = require('./csvWrapper.js');
 var dateFormat = require('dateformat');
 var cluster = require('./cluster.js');
 var ProgressBar = require('progress');
+var ut = require('./util.js');
 
-var dateInPath = function (filename) {
-  var sp = filename.split('_');
-  var date = new Date(sp[sp.length - 1]);
-  date.setHours(0, 0, 0, 0);
-  return date;
-};
+var dateInPath = ut.dateInPath;
 
 var dateString = function (date) {
   return dateFormat(date, "yyyy-mm-dd");
@@ -105,7 +101,7 @@ var updateTraffic = function (slots, date, callback) {
 };
 
 var updateOrder = function (slots, date, callback) {
-  var path = config.goodData + 'timed_cluster_order/order_data_' + dateString(date) + '.csv';
+  var path = config.goodData + 'timed_cluster_order/order_data_' + dateString(date) + (config.test ? '_test.csv' : '.csv');
   csvWrapper.parse(path, function (e, data) {
     if (e) {
       return callback(e);

@@ -6,11 +6,9 @@ var config = require('./config.json');
 var time = require('./time.js');
 var csvWriter = require('csv-write-stream');
 var dateFormat = require('dateformat');
+var ut = require('./util.js');
 
-var dateInPath = function (filename) {
-  var sp = filename.split('_');
-  return new Date(sp[sp.length - 1]);
-};
+var dateInPath = ut.dateInPath;
 
 var main = function () {
   _.each(config.paths.weather, function (path, ind) {

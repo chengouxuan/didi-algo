@@ -3,12 +3,9 @@ var csvWrapper = require('./csvWrapper.js');
 var config = require('./config.json');
 var fs = require('fs');
 var dateFormat = require('dateformat');
+var ut = require('./util.js');
 
-var dateInPath = function (filename) {
-  var sp = filename.split('_');
-  sp = sp[sp.length - 1].split('.');
-  return new Date(sp[0]);
-};
+var dateInPath = ut.dateInPath;
 
 var dateString = function (date) {
   return dateFormat(date, "yyyy-mm-dd");

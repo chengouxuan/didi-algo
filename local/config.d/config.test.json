@@ -1,0 +1,31 @@
+{
+  "tempDir": "./data-transformed/",
+  "goodData": "./good-data-test/",
+  "paths": {
+    "order": [
+        "./data/test_set_1/order_data/order_data_2016-01-22_test",
+        "./data/test_set_1/order_data/order_data_2016-01-24_test",
+        "./data/test_set_1/order_data/order_data_2016-01-26_test",
+        "./data/test_set_1/order_data/order_data_2016-01-28_test",
+        "./data/test_set_1/order_data/order_data_2016-01-30_test"
+    ],
+    "weather": [
+        "./data/test_set_1/weather_data/weather_data_2016-01-22_test",
+        "./data/test_set_1/weather_data/weather_data_2016-01-24_test",
+        "./data/test_set_1/weather_data/weather_data_2016-01-26_test",
+        "./data/test_set_1/weather_data/weather_data_2016-01-28_test",
+        "./data/test_set_1/weather_data/weather_data_2016-01-30_test"
+    ],
+    "poi": "./data/test_set_1/poi_data/poi_data",
+    "cluster": "./data/test_set_1/cluster_map/cluster_map",
+    "traffic": [
+        "./data/test_set_1/traffic_data/traffic_data_2016-01-22_test",
+        "./data/test_set_1/traffic_data/traffic_data_2016-01-24_test",
+        "./data/test_set_1/traffic_data/traffic_data_2016-01-26_test",
+        "./data/test_set_1/traffic_data/traffic_data_2016-01-28_test",
+        "./data/test_set_1/traffic_data/traffic_data_2016-01-30_test"
+    ]
+  },
+  "test": true
+}
+
