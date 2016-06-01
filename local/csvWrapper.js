@@ -7,6 +7,9 @@ var config = require('./config.json');
 var getAllKeys = function (data) {
   var keys = [];
   _.each(data, function (d) {
+    var tmpKeys = _.filter(_.allKeys(d), function (val) {
+      return !!val && val !== 'NaN';
+    });
     keys = keys.concat(_.allKeys(d));
     keys = _.uniq(keys);
   });
@@ -51,6 +54,9 @@ var createCsv = function (data, filename, primKey, primKey2) {
     var line = [];
     _.each(keys, function (key) {
       line.push(d[key]);
+      if (typeof d[key] === 'undefined') {
+        console.log(key);
+      }
     });
     writer.write(line);
   });
