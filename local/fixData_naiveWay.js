@@ -14,12 +14,13 @@ var path = config.goodData + 'training_naive_way/training_set/';
 var testPath = config.goodData + 'training_naive_way/test/';
 
 var main = function () {
+  var test = [];
   csvWrapper.parse(config.testReadme, function (e, readme) {
     test.push({
       timeTag: readme['需预测时间片:']
     });
     extendWithDataInDir(testPath, test, function (e, extended) {
-      csvWrapper.create(data, 'test_data.fixed');
+      csvWrapper.create(extended, 'test_data.fixed');
     });
   });
   fs.readdir(path, function (e, filenames) {
@@ -29,20 +30,14 @@ var main = function () {
         var sp = fn.split('.');
         sp[sp.length - 2] += '_fixed';
         fixedFn = sp.join('.');
-        csvWrapper.create(path + fixedFn, fixed);
+        csvWrapper.create(fixed, _.last(fixedFn.split('/')));
       });
     });
   });
 };
 
 var fixTrainingData = function (trainingData) {
-  _.each(trainingData, function (td) {
-    _.each(td, function (val, key) {
-      if (val === 'NaN') {
-        td[key] = 0;
-      }
-    });
-  });
+  return trainingData;
 };
 
 var parseDir = function (dir, callback) {
@@ -56,7 +51,7 @@ var parseDir = function (dir, callback) {
     _.each(filenames, function (fn) {
       tasks.push(parseFunction (path + fn));
     });
-    async.paralell(tasks, function (e, results) {
+    async.parallel(tasks, function (e, results) {
       if (e) {
         return callback(e);
       }
@@ -88,12 +83,14 @@ var parseFunction = function (path) {
 var extendWithDataInDir = function (dir, test, callback) {
   parseDir(dir, function (e, all) {
     if (e) {
+      console.log(e, all);
+      throw new Error('done!');
       return callback(null, test);
     }
     _.each(test, function (t) {
       var date = time.parseTimeTag(t.timeTag).date;
       var time = time.parseTimeTag(t.timeTag).time;
-      all.every(function (item) {
+      _.every(all, function (item) {
         if (item.timeTag === t.timeTag) {
           _.extend(t, item);
         }
